@@ -1,0 +1,410 @@
+ifeq ($(shell uname -m),x86_64)
+# CC=gcc
+# CXX=g++
+CXX=/data/local/gcc-7.2.0/bin/g++
+CXXFLAGS=-pipe \
+  -Wall \
+  -W \
+  -g \
+  -O2 \
+  -DNDEBUG \
+  -fPIC \
+  -Wno-invalid-offsetof \
+  -Wno-parentheses \
+  -fpermissive \
+  -fstrict-aliasing \
+  -std=c++11
+CFLAGS=
+CPPFLAGS = -std=c++11
+INCPATH=-I./
+DEP_INCPATH=-I./
+
+#============ CCP vars ============
+CCHECK=@ccheck.py
+CCHECK_FLAGS=
+PCLINT=@pclint
+PCLINT_FLAGS=
+CCP=@ccp.py
+CCP_FLAGS=
+
+
+.PHONY:all
+all:libsmalltable.a
+	@echo "[[1;32;40mCOMAKE:BUILD[0m][Target:'[1;32;40mall[0m']"
+	@echo "make all done"
+
+.PHONY:ccpclean
+ccpclean:
+	@echo "[[1;32;40mCOMAKE:BUILD[0m][Target:'[1;32;40mccpclean[0m']"
+	@echo "make ccpclean done"
+
+.PHONY:clean
+clean:ccpclean
+	@echo "[[1;32;40mCOMAKE:BUILD[0m][Target:'[1;32;40mclean[0m']"
+	rm -rf libsmalltable.a
+	rm -rf ./output
+	rm -rf detail/*.o
+
+.PHONY:dist
+dist:
+	@echo "[[1;32;40mCOMAKE:BUILD[0m][Target:'[1;32;40mdist[0m']"
+	tar czvf output.tar.gz output
+	@echo "make dist done"
+
+.PHONY:distclean
+distclean:clean
+	@echo "[[1;32;40mCOMAKE:BUILD[0m][Target:'[1;32;40mdistclean[0m']"
+	rm -f output.tar.gz
+	@echo "make distclean done"
+
+.PHONY:love
+love:
+	@echo "[[1;32;40mCOMAKE:BUILD[0m][Target:'[1;32;40mlove[0m']"
+	@echo "make love done"
+
+libsmalltable.a:detail/smalltable_array_op.o \
+  detail/smalltable_base_cow_hash_map.o \
+  detail/smalltable_base_cowbass4.o \
+  detail/smalltable_binary_file_reader.o \
+  detail/smalltable_dump_fn.o \
+  detail/smalltable_dyn_table.o \
+  detail/smalltable_dyn_tuple.o \
+  detail/smalltable_dyn_unique_index.o \
+  detail/smalltable_get_proc_stat.o \
+  detail/smalltable_load_fn.o \
+  detail/smalltable_string_reader.o \
+  detail/smalltable_version_manager.o \
+  array_op.hpp \
+  base_function_object.hpp \
+  basic_tuple.hpp \
+  bitmap_index.hpp \
+  bitwise_map.hpp \
+  c_common.hpp \
+  c_connector.hpp \
+  c_list.hpp \
+  c_map.hpp \
+  c_math.hpp \
+  c_predicate.hpp \
+  c_selector.hpp \
+  c_show.hpp \
+  coalesced_hash_map.hpp \
+  combined_tuple.hpp \
+  common_function_objects.hpp \
+  compare.hpp \
+  cow_hash_cluster_map.hpp \
+  cow_hash_cluster_set.hpp \
+  cow_hash_map.hpp \
+  cow_hash_set.hpp \
+  cow_table.hpp \
+  cowbass4.hpp \
+  dodge_hash_map.hpp \
+  fixed_array.hpp \
+  fixed_deque.hpp \
+  functional.hpp \
+  graph.hpp \
+  group_view.hpp \
+  hd_map.hpp \
+  index_traits.hpp \
+  is_base_of.hpp \
+  join_iterator.hpp \
+  linear_hash_map.hpp \
+  named_tuple.hpp \
+  object_pool.hpp \
+  observer.hpp \
+  partial_iterator.hpp \
+  pointer_iterator.hpp \
+  smalltable2.hpp \
+  st_shared_array.hpp \
+  st_shared_ptr.hpp \
+  string_reader.hpp \
+  string_writer.hpp \
+  table_stack.hpp \
+  unique_cluster_index.hpp \
+  unique_index.hpp \
+  version_manager.hpp \
+  array_op.h \
+  attribute.h \
+  base_cow_hash_map.h \
+  base_cowbass4.h \
+  bit_tree.h \
+  bitmap.h \
+  choose_variadic.h \
+  common.h \
+  compile_time_assert.h \
+  debug.h \
+  default_value.h \
+  dyn_index.h \
+  dyn_table.h \
+  dyn_tuple.h \
+  dyn_unique_index.h \
+  get_proc_stat.h \
+  object_hanger.h \
+  rc_memory_pool.h \
+  st_errno.h \
+  st_hash.h \
+  st_timer.h \
+  st_utility.h
+	@echo "[[1;32;40mCOMAKE:BUILD[0m][Target:'[1;32;40mlibsmalltable.a[0m']"
+	ar crs libsmalltable.a detail/smalltable_array_op.o \
+  detail/smalltable_base_cow_hash_map.o \
+  detail/smalltable_base_cowbass4.o \
+  detail/smalltable_binary_file_reader.o \
+  detail/smalltable_dump_fn.o \
+  detail/smalltable_dyn_table.o \
+  detail/smalltable_dyn_tuple.o \
+  detail/smalltable_dyn_unique_index.o \
+  detail/smalltable_get_proc_stat.o \
+  detail/smalltable_load_fn.o \
+  detail/smalltable_string_reader.o \
+  detail/smalltable_version_manager.o
+	mkdir -p ./output/lib
+	cp -f libsmalltable.a ./output/lib
+	mkdir -p ./output/include
+	cp -f array_op.hpp base_function_object.hpp basic_tuple.hpp bitmap_index.hpp bitwise_map.hpp c_common.hpp c_connector.hpp c_list.hpp c_map.hpp c_math.hpp c_predicate.hpp c_selector.hpp c_show.hpp coalesced_hash_map.hpp combined_tuple.hpp common_function_objects.hpp compare.hpp cow_hash_cluster_map.hpp cow_hash_cluster_set.hpp cow_hash_map.hpp cow_hash_set.hpp cow_table.hpp cowbass4.hpp dodge_hash_map.hpp fixed_array.hpp fixed_deque.hpp functional.hpp graph.hpp group_view.hpp hd_map.hpp index_traits.hpp is_base_of.hpp join_iterator.hpp linear_hash_map.hpp named_tuple.hpp object_pool.hpp observer.hpp partial_iterator.hpp pointer_iterator.hpp smalltable2.hpp st_shared_array.hpp st_shared_ptr.hpp string_reader.hpp string_writer.hpp table_stack.hpp unique_cluster_index.hpp unique_index.hpp version_manager.hpp array_op.h attribute.h base_cow_hash_map.h base_cowbass4.h bit_tree.h bitmap.h choose_variadic.h common.h compile_time_assert.h debug.h default_value.h dyn_index.h dyn_table.h dyn_tuple.h dyn_unique_index.h get_proc_stat.h object_hanger.h rc_memory_pool.h st_errno.h st_hash.h st_timer.h st_utility.h ./output/include
+
+detail/smalltable_array_op.o:detail/array_op.cpp \
+  array_op.h \
+  debug.h \
+  st_errno.h \
+  st_timer.h
+	@echo "[[1;32;40mCOMAKE:BUILD[0m][Target:'[1;32;40mdetail/smalltable_array_op.o[0m']"
+	$(CXX) -c $(INCPATH) $(DEP_INCPATH) $(CPPFLAGS) $(CXXFLAGS)  -o detail/smalltable_array_op.o detail/array_op.cpp
+
+detail/smalltable_base_cow_hash_map.o:detail/base_cow_hash_map.cpp \
+  base_cow_hash_map.h \
+  rc_memory_pool.h \
+  common.h \
+  debug.h \
+  st_errno.h \
+  st_timer.h \
+  string_writer.hpp \
+  object_hanger.h \
+  c_common.hpp \
+  compile_time_assert.h \
+  is_base_of.hpp \
+  c_show.hpp \
+  choose_variadic.h \
+  st_shared_ptr.hpp \
+  detail/st_shared_count.hpp \
+  detail/st_sp_counted_base.hpp \
+  detail/st_sp_counted_base_gcc_x86.hpp \
+  detail/st_sp_counted_impl.hpp \
+  st_utility.h
+	@echo "[[1;32;40mCOMAKE:BUILD[0m][Target:'[1;32;40mdetail/smalltable_base_cow_hash_map.o[0m']"
+	$(CXX) -c $(INCPATH) $(DEP_INCPATH) $(CPPFLAGS) $(CXXFLAGS)  -o detail/smalltable_base_cow_hash_map.o detail/base_cow_hash_map.cpp
+
+detail/smalltable_base_cowbass4.o:detail/base_cowbass4.cpp \
+  base_cowbass4.h \
+  debug.h \
+  st_errno.h \
+  st_timer.h \
+  array_op.h \
+  rc_memory_pool.h \
+  common.h \
+  string_writer.hpp \
+  object_hanger.h \
+  c_common.hpp \
+  compile_time_assert.h \
+  is_base_of.hpp \
+  c_show.hpp \
+  choose_variadic.h \
+  st_shared_ptr.hpp \
+  detail/st_shared_count.hpp \
+  detail/st_sp_counted_base.hpp \
+  detail/st_sp_counted_base_gcc_x86.hpp \
+  detail/st_sp_counted_impl.hpp
+	@echo "[[1;32;40mCOMAKE:BUILD[0m][Target:'[1;32;40mdetail/smalltable_base_cowbass4.o[0m']"
+	$(CXX) -c $(INCPATH) $(DEP_INCPATH) $(CPPFLAGS) $(CXXFLAGS)  -o detail/smalltable_base_cowbass4.o detail/base_cowbass4.cpp
+
+detail/smalltable_binary_file_reader.o:detail/binary_file_reader.cpp \
+  detail/binary_file_reader.h \
+  detail/meta_reader.hpp \
+  debug.h \
+  st_errno.h \
+  st_timer.h
+	@echo "[[1;32;40mCOMAKE:BUILD[0m][Target:'[1;32;40mdetail/smalltable_binary_file_reader.o[0m']"
+	$(CXX) -c $(INCPATH) $(DEP_INCPATH) $(CPPFLAGS) $(CXXFLAGS)  -o detail/smalltable_binary_file_reader.o detail/binary_file_reader.cpp
+
+detail/smalltable_dump_fn.o:detail/dump_fn.cpp \
+  detail/dump_fn.h \
+  debug.h \
+  st_errno.h \
+  st_timer.h \
+  detail/meta_reader.hpp
+	@echo "[[1;32;40mCOMAKE:BUILD[0m][Target:'[1;32;40mdetail/smalltable_dump_fn.o[0m']"
+	$(CXX) -c $(INCPATH) $(DEP_INCPATH) $(CPPFLAGS) $(CXXFLAGS)  -o detail/smalltable_dump_fn.o detail/dump_fn.cpp
+
+detail/smalltable_dyn_table.o:detail/dyn_table.cpp \
+  dyn_table.h \
+  dyn_index.h \
+  dyn_tuple.h \
+  common.h \
+  debug.h \
+  st_errno.h \
+  st_timer.h \
+  string_writer.hpp \
+  object_hanger.h \
+  c_common.hpp \
+  compile_time_assert.h \
+  is_base_of.hpp \
+  c_show.hpp \
+  choose_variadic.h \
+  st_hash.h \
+  base_function_object.hpp \
+  detail/base_function_object_inl.hpp \
+  detail/st_hash_inl.h \
+  detail/dyn_tuple_inl.h \
+  compare.hpp \
+  index_traits.hpp \
+  partial_iterator.hpp \
+  pointer_iterator.hpp \
+  default_value.h \
+  cow_hash_cluster_set.hpp \
+  cow_hash_set.hpp \
+  base_cow_hash_map.h \
+  rc_memory_pool.h \
+  st_shared_ptr.hpp \
+  detail/st_shared_count.hpp \
+  detail/st_sp_counted_base.hpp \
+  detail/st_sp_counted_base_gcc_x86.hpp \
+  detail/st_sp_counted_impl.hpp \
+  cowbass4.hpp \
+  c_math.hpp \
+  array_op.hpp \
+  common_function_objects.hpp \
+  st_utility.h \
+  combined_tuple.hpp \
+  named_tuple.hpp \
+  basic_tuple.hpp \
+  c_list.hpp \
+  detail/c_list_inl.hpp \
+  attribute.h \
+  dyn_unique_index.h \
+  string_reader.hpp \
+  detail/string_reader_inl.hpp
+	@echo "[[1;32;40mCOMAKE:BUILD[0m][Target:'[1;32;40mdetail/smalltable_dyn_table.o[0m']"
+	$(CXX) -c $(INCPATH) $(DEP_INCPATH) $(CPPFLAGS) $(CXXFLAGS)  -o detail/smalltable_dyn_table.o detail/dyn_table.cpp
+
+detail/smalltable_dyn_tuple.o:detail/dyn_tuple.cpp \
+  dyn_tuple.h \
+  common.h \
+  debug.h \
+  st_errno.h \
+  st_timer.h \
+  string_writer.hpp \
+  object_hanger.h \
+  c_common.hpp \
+  compile_time_assert.h \
+  is_base_of.hpp \
+  c_show.hpp \
+  choose_variadic.h \
+  st_hash.h \
+  base_function_object.hpp \
+  detail/base_function_object_inl.hpp \
+  detail/st_hash_inl.h \
+  detail/dyn_tuple_inl.h \
+  compare.hpp \
+  string_reader.hpp \
+  detail/string_reader_inl.hpp
+	@echo "[[1;32;40mCOMAKE:BUILD[0m][Target:'[1;32;40mdetail/smalltable_dyn_tuple.o[0m']"
+	$(CXX) -c $(INCPATH) $(DEP_INCPATH) $(CPPFLAGS) $(CXXFLAGS)  -o detail/smalltable_dyn_tuple.o detail/dyn_tuple.cpp
+
+detail/smalltable_dyn_unique_index.o:detail/dyn_unique_index.cpp \
+  dyn_unique_index.h \
+  dyn_index.h \
+  dyn_tuple.h \
+  common.h \
+  debug.h \
+  st_errno.h \
+  st_timer.h \
+  string_writer.hpp \
+  object_hanger.h \
+  c_common.hpp \
+  compile_time_assert.h \
+  is_base_of.hpp \
+  c_show.hpp \
+  choose_variadic.h \
+  st_hash.h \
+  base_function_object.hpp \
+  detail/base_function_object_inl.hpp \
+  detail/st_hash_inl.h \
+  detail/dyn_tuple_inl.h \
+  compare.hpp \
+  index_traits.hpp \
+  partial_iterator.hpp \
+  pointer_iterator.hpp \
+  default_value.h \
+  cow_hash_cluster_set.hpp \
+  cow_hash_set.hpp \
+  base_cow_hash_map.h \
+  rc_memory_pool.h \
+  st_shared_ptr.hpp \
+  detail/st_shared_count.hpp \
+  detail/st_sp_counted_base.hpp \
+  detail/st_sp_counted_base_gcc_x86.hpp \
+  detail/st_sp_counted_impl.hpp \
+  cowbass4.hpp \
+  c_math.hpp \
+  array_op.hpp \
+  common_function_objects.hpp \
+  st_utility.h \
+  combined_tuple.hpp \
+  named_tuple.hpp \
+  basic_tuple.hpp \
+  c_list.hpp \
+  detail/c_list_inl.hpp \
+  attribute.h
+	@echo "[[1;32;40mCOMAKE:BUILD[0m][Target:'[1;32;40mdetail/smalltable_dyn_unique_index.o[0m']"
+	$(CXX) -c $(INCPATH) $(DEP_INCPATH) $(CPPFLAGS) $(CXXFLAGS)  -o detail/smalltable_dyn_unique_index.o detail/dyn_unique_index.cpp
+
+detail/smalltable_get_proc_stat.o:detail/get_proc_stat.cpp \
+  get_proc_stat.h
+	@echo "[[1;32;40mCOMAKE:BUILD[0m][Target:'[1;32;40mdetail/smalltable_get_proc_stat.o[0m']"
+	$(CXX) -c $(INCPATH) $(DEP_INCPATH) $(CPPFLAGS) $(CXXFLAGS)  -o detail/smalltable_get_proc_stat.o detail/get_proc_stat.cpp
+
+detail/smalltable_load_fn.o:detail/load_fn.cpp \
+  detail/load_fn.h \
+  debug.h \
+  st_errno.h \
+  st_timer.h \
+  detail/binary_file_reader.h \
+  detail/meta_reader.hpp
+	@echo "[[1;32;40mCOMAKE:BUILD[0m][Target:'[1;32;40mdetail/smalltable_load_fn.o[0m']"
+	$(CXX) -c $(INCPATH) $(DEP_INCPATH) $(CPPFLAGS) $(CXXFLAGS)  -o detail/smalltable_load_fn.o detail/load_fn.cpp
+
+detail/smalltable_string_reader.o:detail/string_reader.cpp \
+  string_reader.hpp \
+  common.h \
+  debug.h \
+  st_errno.h \
+  st_timer.h \
+  string_writer.hpp \
+  object_hanger.h \
+  c_common.hpp \
+  compile_time_assert.h \
+  is_base_of.hpp \
+  c_show.hpp \
+  choose_variadic.h \
+  detail/string_reader_inl.hpp
+	@echo "[[1;32;40mCOMAKE:BUILD[0m][Target:'[1;32;40mdetail/smalltable_string_reader.o[0m']"
+	$(CXX) -c $(INCPATH) $(DEP_INCPATH) $(CPPFLAGS) $(CXXFLAGS)  -o detail/smalltable_string_reader.o detail/string_reader.cpp
+
+detail/smalltable_version_manager.o:detail/version_manager.cpp \
+  version_manager.hpp \
+  common.h \
+  debug.h \
+  st_errno.h \
+  st_timer.h \
+  string_writer.hpp \
+  object_hanger.h \
+  c_common.hpp \
+  compile_time_assert.h \
+  is_base_of.hpp \
+  c_show.hpp \
+  choose_variadic.h
+	@echo "[[1;32;40mCOMAKE:BUILD[0m][Target:'[1;32;40mdetail/smalltable_version_manager.o[0m']"
+	$(CXX) -c $(INCPATH) $(DEP_INCPATH) $(CPPFLAGS) $(CXXFLAGS)  -o detail/smalltable_version_manager.o detail/version_manager.cpp
+
+endif #ifeq ($(shell uname -m),x86_64)
+
+
